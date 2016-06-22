@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1" author="unknown">
+
+        <createTable tableName="user">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="int"/>
+            <column name="created_at" type="datetime"/>
+            <column name="updated_at" type="datetime"/>
+            <column name="uid" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="type" type="int"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="2" author="unknown">
+
+        <createTable tableName="internet_entity">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="int"/>
+            <column name="created_at" type="datetime"/>
+            <column name="updated_at" type="datetime"/>
+            <column name="created_by" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uuid" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="ip" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="3" author="unknown">
+
+        <createTable tableName="authorization">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="int"/>
+            <column name="created_at" type="datetime"/>
+            <column name="authorizer" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authorizee" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="4" author="unknown">
+
+        <createTable tableName="authorization_token">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="version" type="int"/>
+            <column name="created_at" type="datetime"/>
+            <column name="expired_at" type="datetime"/>
+            <column name="created_by" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="entity" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="varchar(255)"/>
+        </createTable>
+
+        <createIndex indexName="idx_token"
+                     tableName="authorization_token">
+            <column name="token" type="varchar(255)"/>
+        </createIndex>
+
+    </changeSet>
+
+
+</databaseChangeLog>
