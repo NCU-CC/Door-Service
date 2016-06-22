@@ -33,7 +33,7 @@
             <column name="version" type="int"/>
             <column name="created_at" type="datetime"/>
             <column name="updated_at" type="datetime"/>
-            <column name="created_by" type="int">
+            <column name="creator_id" type="int">
                 <constraints nullable="false"/>
             </column>
             <column name="uuid" type="varchar(255)">
@@ -55,13 +55,13 @@
             </column>
             <column name="version" type="int"/>
             <column name="created_at" type="datetime"/>
-            <column name="authorizer" type="int">
+            <column name="authorizer_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="authorizee" type="int">
+            <column name="authorizee_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="entity" type="int">
+            <column name="entity_id" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -77,10 +77,10 @@
             <column name="version" type="int"/>
             <column name="created_at" type="datetime"/>
             <column name="expired_at" type="datetime"/>
-            <column name="created_by" type="int">
+            <column name="creator_id" type="int">
                 <constraints nullable="false" />
             </column>
-            <column name="entity" type="int">
+            <column name="entity_id" type="int">
                 <constraints nullable="false"/>
             </column>
             <column name="token" type="varchar(255)"/>
