@@ -49,7 +49,7 @@
 
     <changeSet id="3" author="unknown">
 
-        <createTable tableName="authorization">
+        <createTable tableName="entity_authorization">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
