@@ -9,13 +9,7 @@ import org.springframework.validation.BindException
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.WebDataBinder
-import org.springframework.web.bind.annotation.InitBinder
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import tw.edu.ncu.cc.entity.data.v1.AuthorizationObject
 import tw.edu.ncu.cc.entity.server.operation.AuthorizationOperation
 import tw.edu.ncu.cc.entity.server.validator.AuthorizationCreateValidator
@@ -39,7 +33,11 @@ public class AuthorizationController extends BaseController {
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @RequestMapping( method = RequestMethod.DELETE )
     def delete(  @RequestParam( value = "authorizee_id", required = true ) final String authorizeeId,
-                 @RequestParam( value = "entity_id", required = true ) final String entity_id ) {
+                 @RequestParam( value = "entity_id", required = true ) final String entity_id, Authentication authentication ) {
+
+        logger.info( "authorization delete, authorizee:{}, entity:{}, operator:{}",
+                authorizeeId, entity_id, authentication.name )
+
 
         authorizationOperation.delete( authorizeeId, entity_id )
     }
@@ -48,6 +46,9 @@ public class AuthorizationController extends BaseController {
     @ResponseStatus( HttpStatus.CREATED )
     @RequestMapping( method = RequestMethod.POST )
     def create(@Validated @RequestBody final AuthorizationObject authorizationObject, BindingResult bindingResult, Authentication authentication ) {
+
+        logger.info( "authorization create, authorizer:{}, authorizee:{}, entity:{}, operator:{}",
+                authentication.name, authorizationObject.authorizeeId, authorizationObject.entityId, authentication.name )
 
         if( bindingResult.hasErrors() ) {
             throw new BindException( bindingResult )

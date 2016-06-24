@@ -6,6 +6,7 @@ import org.springframework.core.convert.TypeDescriptor
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
 import org.springframework.validation.BindException
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
@@ -39,7 +40,11 @@ public class UserController extends BaseController {
 
     @PreAuthorize( value = "hasRole('admin')" )
     @RequestMapping( method = RequestMethod.GET )
-    def index( Pageable pageable ) {
+    def index( Pageable pageable, Authentication authentication ) {
+
+        logger.info( "entity index, size:{}, number:{}, offset:{}, operator:{}",
+                pageable.pageSize, pageable.pageNumber, pageable.offset, authentication.name)
+
         def userPages = userOperation.index( pageable )
 
         def userObjects = conversionService.convert(
@@ -53,7 +58,9 @@ public class UserController extends BaseController {
 
     @PreAuthorize( value = "hasRole('admin')" )
     @RequestMapping( value = "{uid}", method = RequestMethod.GET )
-    def show( @PathVariable( "uid" ) final String uid ) {
+    def show( @PathVariable( "uid" ) final String uid, Authentication authentication ) {
+
+        logger.info( "user show, user:{}, operator:{}", uid, authentication.name)
 
         def user = userOperation.show( uid )
 
@@ -65,7 +72,9 @@ public class UserController extends BaseController {
     @PreAuthorize( value = "hasRole('admin')" )
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @RequestMapping( value = "{uid}", method = RequestMethod.DELETE )
-    def destroy( @PathVariable( "uid" ) final String uid ) {
+    def destroy( @PathVariable( "uid" ) final String uid, Authentication authentication ) {
+
+        logger.info( "user delete, entity:{}, operator:{}", uid, authentication.name)
 
         userOperation.destroy( uid )
     }
@@ -73,7 +82,10 @@ public class UserController extends BaseController {
     @PreAuthorize( value = "hasRole('admin')" )
     @ResponseStatus( HttpStatus.CREATED )
     @RequestMapping( method = RequestMethod.POST )
-    def create(@Validated @RequestBody final UserObject userObject, BindingResult bindingResult ) {
+    def create(@Validated @RequestBody final UserObject userObject, BindingResult bindingResult, Authentication authentication ) {
+
+        logger.info( "user create, userType:{}, UserDescription:{}, operator:{}",
+                userObject.type, userObject.description, authentication.name )
 
         if( bindingResult.hasErrors() ) {
             throw new BindException( bindingResult )
@@ -88,7 +100,10 @@ public class UserController extends BaseController {
 
     @PreAuthorize( value = "hasRole('admin')" )
     @RequestMapping( value = "{uid}", method = RequestMethod.PUT )
-    def update( @PathVariable( "uid" ) final String uid, @RequestBody final UserObject userObject ) {
+    def update( @PathVariable( "uid" ) final String uid, @RequestBody final UserObject userObject, Authentication authentication ) {
+
+        logger.info( "user update, user:{}, userType:{}, UserDescription:{}, operator:{}",
+                uid, userObject.type, userObject.description, authentication.name )
 
         def user = userOperation.update( uid, userObject )
 
@@ -99,7 +114,10 @@ public class UserController extends BaseController {
 
     @PreAuthorize( value = "hasRole('admin') or ( hasRole('common') and #uid == authentication.name )" )
     @RequestMapping( value = "{uid}/authorized_entities", method = RequestMethod.GET )
-    def showEntities( @PathVariable( "uid" ) final String uid, Pageable pageable ) {
+    def showEntities( @PathVariable( "uid" ) final String uid, Pageable pageable, Authentication authentication ) {
+
+        logger.info( "user authorized entities show, size:{}, number:{}, offset:{}, operator:{}",
+                pageable.pageSize, pageable.pageNumber, pageable.offset, authentication.name)
 
         def entityPages = userOperation.showAuthorizedEntities( uid, pageable )
 

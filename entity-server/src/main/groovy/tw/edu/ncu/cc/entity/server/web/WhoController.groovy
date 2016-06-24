@@ -19,6 +19,8 @@ public class WhoController extends BaseController {
     @RequestMapping( method = RequestMethod.GET )
     def whoami( Authentication authentication ) {
 
+        logger.info( "who show, operator:{}", authentication.name)
+
         def user = userService.findByUID( authentication.name )
 
         if( user == null ) {
