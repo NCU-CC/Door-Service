@@ -1,5 +1,7 @@
 package tw.edu.ncu.cc.entity.server.web
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.TypeDescriptor
@@ -12,19 +14,13 @@ import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.HttpServerErrorException
 import tw.edu.ncu.cc.entity.data.v1.AuthorizationTokenObject
 import tw.edu.ncu.cc.entity.data.v1.EntityObject
 import tw.edu.ncu.cc.entity.data.v1.UserObject
 import tw.edu.ncu.cc.entity.server.model.InternetEntity
 import tw.edu.ncu.cc.entity.server.model.User
-import tw.edu.ncu.cc.entity.server.model.User.Type
 import tw.edu.ncu.cc.entity.server.operation.EntityOperation
-import tw.edu.ncu.cc.entity.server.service.AuthorizationTokenService
-import tw.edu.ncu.cc.entity.server.service.EntityService
-import tw.edu.ncu.cc.entity.server.service.UserService
 import tw.edu.ncu.cc.entity.server.validator.EntityCreateValidator
-import tw.edu.ncu.cc.entity.server.validator.UserCreateValidator
 
 @RestController
 @RequestMapping( value = "v1/entities" )
@@ -43,7 +39,11 @@ public class EntityController extends BaseController {
 
     @PreAuthorize( value = "hasRole('admin')" )
     @RequestMapping( method = RequestMethod.GET )
-    def index( Pageable pageable ) {
+    def index( Pageable pageable, Authentication authentication ) {
+
+        logger.info( "entity index, size:{}, number:{}, offset:{}, operator:{}",
+                pageable.pageSize, pageable.pageNumber, pageable.offset, authentication.name)
+
         def entityPages = entityOperation.index( pageable )
 
         def entityObjects = conversionService.convert(
@@ -57,7 +57,9 @@ public class EntityController extends BaseController {
 
     @PreAuthorize( value = "hasRole('admin')" )
     @RequestMapping( value = "{uuid}", method = RequestMethod.GET )
-    def show( @PathVariable( "uuid" ) final String uuid ) {
+    def show( @PathVariable( "uuid" ) final String uuid, Authentication authentication ) {
+
+        logger.info( "entity show, entity:{}, operator:{}", uuid, authentication.name)
 
         def entity = entityOperation.show( uuid )
 
@@ -69,7 +71,9 @@ public class EntityController extends BaseController {
     @PreAuthorize( value = "hasRole('admin')" )
     @ResponseStatus( HttpStatus.NO_CONTENT )
     @RequestMapping( value = "{uuid}", method = RequestMethod.DELETE )
-    def destroy( @PathVariable( "uuid" ) final String uuid ) {
+    def destroy( @PathVariable( "uuid" ) final String uuid, Authentication authentication ) {
+
+        logger.info( "entity delete, entity:{}, operator:{}", uuid, authentication.name)
 
         entityOperation.destroy( uuid )
     }
@@ -78,6 +82,9 @@ public class EntityController extends BaseController {
     @ResponseStatus( HttpStatus.CREATED )
     @RequestMapping( method = RequestMethod.POST )
     def create(@Validated @RequestBody final EntityObject entityObject, BindingResult bindingResult, Authentication authentication ) {
+
+        logger.info( "entity create, entityName:{}, entityIp:{}, operator:{}",
+              entityObject.name, entityObject.ip, authentication.name )
 
         if( bindingResult.hasErrors() ) {
             throw new BindException( bindingResult )
@@ -92,7 +99,10 @@ public class EntityController extends BaseController {
 
     @PreAuthorize( value = "hasRole('admin')" )
     @RequestMapping( value = "{uuid}", method = RequestMethod.PUT )
-    def update( @PathVariable( "uuid" ) final String uuid, @RequestBody final EntityObject entityObject ) {
+    def update( @PathVariable( "uuid" ) final String uuid, @RequestBody final EntityObject entityObject, Authentication authentication ) {
+
+        logger.info( "entity update, entity:{}, entityName:{}, entityIp:{}, operator:{}",
+                uuid, entityObject.name, entityObject.ip, authentication.name )
 
         def entity = entityOperation.update( uuid, entityObject )
 
@@ -103,7 +113,11 @@ public class EntityController extends BaseController {
 
     @PreAuthorize( value = "hasRole('admin')" )
     @RequestMapping( value = "{uuid}/authorizees", method = RequestMethod.GET )
-    def showAuthorizees( @PathVariable( "uuid" ) final String uuid, Pageable pageable ) {
+    def showAuthorizees( @PathVariable( "uuid" ) final String uuid, Pageable pageable, Authentication authentication ) {
+
+        logger.info( "entity authorizees show, entity:{}, size:{}, number:{}, offset:{}, operator:{}",
+                uuid, pageable.pageSize, pageable.pageNumber, pageable.offset, authentication.name)
+
 
         def userPages = entityOperation.showAuthorities( uuid, pageable )
 
@@ -119,6 +133,8 @@ public class EntityController extends BaseController {
     @PreAuthorize( value = "hasRole('admin') or hasRole('common')" )
     @RequestMapping( value = "{uuid}/authorization_tokens", method = RequestMethod.POST )
     def createToken( @PathVariable( "uuid" ) final String uuid, Authentication authentication ) {
+
+        logger.info( "entity token create, entity:{}, operator:{}", uuid, authentication.name )
 
         def token = entityOperation.createToken( uuid, authentication.name )
 

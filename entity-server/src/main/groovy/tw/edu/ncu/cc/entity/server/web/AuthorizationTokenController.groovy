@@ -3,12 +3,11 @@ package tw.edu.ncu.cc.entity.server.web
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
-import tw.edu.ncu.cc.entity.data.v1.WhoObject
 import tw.edu.ncu.cc.entity.server.service.AuthorizationTokenService
 
 import javax.servlet.http.HttpServletRequest
@@ -22,6 +21,8 @@ public class AuthorizationTokenController extends BaseController {
 
     @RequestMapping( value = "{token}", method = RequestMethod.GET )
     def show(  @PathVariable( "token" ) final String token, HttpServletRequest request ) {
+
+        logger.info( "authorization token create, operator:{}", request.remoteAddr)
 
         def authorizationToken = authorizationTokenService.findUnexpiredByTokenAndEntityIp( token, request.remoteAddr )
 
