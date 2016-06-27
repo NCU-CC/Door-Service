@@ -50,6 +50,7 @@ class User implements Serializable {
     @PrePersist
     protected void onCreate() {
         createdAt = new Date()
+        updatedAt = createdAt
     }
 
     @PreUpdate

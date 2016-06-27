@@ -42,6 +42,7 @@ class InternetEntity implements Serializable {
     @PrePersist
     protected void onCreate() {
         createdAt = new Date()
+        updatedAt = createdAt
     }
 
     @PreUpdate
