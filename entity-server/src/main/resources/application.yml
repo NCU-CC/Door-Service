@@ -4,7 +4,7 @@ spring:
   application:
     name: entity
   profiles:
-    active: production
+    active: test
   http:
     encoding:
       charset: UTF-8
