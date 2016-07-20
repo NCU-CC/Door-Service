@@ -39,7 +39,7 @@ class EntityControllerTest extends IntegrationSpecification {
     }
 
 
-    def "admin can read entitiy info"() {
+    def "admin can read entity info"() {
         when:
             def response = JSON(
                     server().perform(
@@ -162,6 +162,28 @@ class EntityControllerTest extends IntegrationSpecification {
                     put( targetURL + "/entity-uuid-2" ).with( commonToken )
                             .contentType( MediaType.APPLICATION_JSON )
                             .content( '{ "name" : "test", "ip" : "4.3.2.1" }' )
+            ).andExpect(
+                    status().isForbidden()
+            )
+    }
+
+    def "admin can update entity ip with same ip"() {
+        expect:
+            server().perform(
+                    put( targetURL + "/entity-uuid-2" ).with( adminToken )
+                            .contentType( MediaType.APPLICATION_JSON )
+                            .content( '{ "name" : "test", "ip" : "0.0.0.2" }' )
+            ).andExpect(
+                    status().isOk()
+            )
+    }
+
+    def "admin cannot update entity ip to exist ip"() {
+        expect:
+            server().perform(
+                    put( targetURL + "/entity-uuid-2" ).with( adminToken )
+                            .contentType( MediaType.APPLICATION_JSON )
+                            .content( '{ "name" : "test", "ip" : "0.0.0.1" }' )
             ).andExpect(
                     status().isForbidden()
             )

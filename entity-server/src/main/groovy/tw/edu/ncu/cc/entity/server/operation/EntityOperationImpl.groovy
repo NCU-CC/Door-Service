@@ -71,14 +71,18 @@ class EntityOperationImpl implements EntityOperation {
 
     @Override
     InternetEntity update(String uuid, EntityObject entityObject) {
-        def sameIpEntity = entityService.findByIp( entityObject.ip )
-        if( sameIpEntity != null ) {
-            throw new HttpServerErrorException(HttpStatus.FORBIDDEN, "entity with same ip exists")
-        }
 
         def entity = show(uuid)
+        if(!entity.ip.equals( entityObject.ip )) {
+            def sameIpEntity = entityService.findByIp( entityObject.ip )
+            if( sameIpEntity != null ) {
+                throw new HttpServerErrorException(HttpStatus.FORBIDDEN, "entity with same ip exists")
+            }
+            entity.ip = entityObject.ip
+        }
+
         entity.name = entityObject.name
-        entity.ip = entityObject.ip
+
         return entityService.update(entity)
     }
 
