@@ -1,12 +1,12 @@
 
-INSERT INTO user ( id, uid, type ) VALUES
-  ( 1, 'user-uid-1', 1 ),
-  ( 2, 'user-uid-2', 0 ),
-  ( 3, 'user-uid-3', 0 ),
-  ( 4, 'user-uid-4', 0 ),
-  ( 5, 'user-uid-5', 0 ),
-  ( 6, 'user-uid-6', 0 ),
-  ( 7, 'user-uid-7', 0 );
+INSERT INTO user ( id, uid, type, description ) VALUES
+  ( 1, 'user-uid-1', 1, 'user-des-1' ),
+  ( 2, 'user-uid-2', 0, 'user-des-2' ),
+  ( 3, 'user-uid-3', 0, 'user-des-3' ),
+  ( 4, 'user-uid-4', 0, 'user-des-4' ),
+  ( 5, 'user-uid-5', 0, 'user-des-5' ),
+  ( 6, 'user-uid-6', 0, 'user-des-6' ),
+  ( 7, 'user-uid-7', 0, 'user-des-7' );
 
 INSERT INTO internet_entity ( id, uuid, name, ip, creator_id ) VALUES
   ( 1, 'entity-uuid-1', 'entity1', '0.0.0.1', 1 ),

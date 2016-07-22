@@ -21,6 +21,7 @@ class WhoControllerTest extends IntegrationSpecification {
             )
         then:
             response.type == "admin"
+            response.description == "user-des-1"
     }
 
 
@@ -35,6 +36,7 @@ class WhoControllerTest extends IntegrationSpecification {
             )
         then:
             response.type == "common"
+            response.description == "user-des-2"
     }
 
 
@@ -49,5 +51,6 @@ class WhoControllerTest extends IntegrationSpecification {
             )
         then:
             response.type == "undefined"
+            response.description == null
     }
 }
