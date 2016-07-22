@@ -4,4 +4,5 @@ class WhoObject {
 
     def String type
     def String uid
+    def String description
 }

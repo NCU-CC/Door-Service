@@ -26,7 +26,7 @@ public class WhoController extends BaseController {
         if( user == null ) {
             return new WhoObject( type: "undefined" )
         } else {
-            return new WhoObject( type: user.type.name(), uid: user.uid )
+            return new WhoObject( type: user.type.name(), uid: user.uid, description: user.description )
         }
     }
 
