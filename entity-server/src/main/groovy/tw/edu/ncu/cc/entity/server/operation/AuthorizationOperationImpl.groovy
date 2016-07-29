@@ -1,6 +1,9 @@
 package tw.edu.ncu.cc.entity.server.operation
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -23,6 +26,30 @@ class AuthorizationOperationImpl implements AuthorizationOperation {
 
     @Autowired
     def AuthorizationService authorizationService
+
+    @Override
+    Page<EntityAuthorization> index(Pageable pageable, AuthorizationObject authorizationObject) {
+
+        def authorizee = userService.findByUID( authorizationObject.authorizeeId )
+
+        if( authorizee == null ) {
+            throw new HttpServerErrorException( HttpStatus.NOT_FOUND, "authorizee is not found" )
+        }
+
+        def entity = entityService.findByUUID( authorizationObject.entityId )
+
+        if( entity == null ) {
+            throw new HttpServerErrorException( HttpStatus.NOT_FOUND, "entity is not found" )
+        }
+
+        def authorization = authorizationService.findByAuthorizeeAndEntity( authorizee, entity )
+
+        if( authorization != null ) {
+            return new PageImpl<EntityAuthorization>( Arrays.asList( authorization ), pageable, 1 )
+        }
+
+        return new PageImpl<EntityAuthorization>( [], pageable, 0 )
+    }
 
     @Override
     EntityAuthorization create( AuthorizationObject authorizationObject, String uid ) {

@@ -16,6 +16,46 @@ class AuthorizationControllerTest extends IntegrationSpecification {
     def adminToken = accessToken().user( "user-uid-1" ).scope( "user.info.basic.read" )
     def commonToken = accessToken().user( "user-uid-2" ).scope( "user.info.basic.read" )
 
+    def "admin can read authorizations with correct param 1"() {
+        when:
+            def response = JSON(
+                    server().perform(
+                            get( targetURL ).with( adminToken )
+                                    .param( "authorizee_id", "user-uid-1" )
+                                    .param( "entity_id", "entity-uuid-1" )
+                    ).andExpect(
+                            status().isOk()
+                    ).andReturn()
+            )
+        then:
+            response.pageMetadata.totalElements == 1
+    }
+
+    def "admin can read authorizations with correct param 2"() {
+        when:
+            def response = JSON(
+                    server().perform(
+                            get( targetURL ).with( adminToken )
+                                    .param( "authorizee_id", "user-uid-1" )
+                                    .param( "entity_id", "entity-uuid-3" )
+                    ).andExpect(
+                            status().isOk()
+                    ).andReturn()
+            )
+        then:
+            response.pageMetadata.totalElements == 0
+    }
+
+    def "common user cannot read authorizations"() {
+        expect:
+            server().perform(
+                    get( targetURL ).with( commonToken )
+                            .param( "authorizee_id", "user-uid-1" )
+                            .param( "entity_id", "entity-uuid-1" )
+            ).andExpect(
+                    status().isForbidden()
+            )
+    }
 
     def "admin can delete authorization"() {
         when:
