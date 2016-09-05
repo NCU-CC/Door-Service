@@ -170,7 +170,7 @@ class UserControllerTest extends IntegrationSpecification {
         when:
             def response = JSON(
                     server().perform(
-                            get( targetURL + "/user-uid-1/authorized_entities" ).with( adminToken )
+                            get( targetURL + "/user-uid-1/entities?authorized=true" ).with( adminToken )
                     ).andExpect(
                             status().isOk()
                     ).andReturn()
@@ -183,7 +183,7 @@ class UserControllerTest extends IntegrationSpecification {
         when:
             def response = JSON(
                     server().perform(
-                            get( targetURL + "/user-uid-2/authorized_entities" ).with( commonToken )
+                            get( targetURL + "/user-uid-2/entities?authorized=true" ).with( commonToken )
                     ).andExpect(
                             status().isOk()
                     ).andReturn()
@@ -195,7 +195,7 @@ class UserControllerTest extends IntegrationSpecification {
     def "admin user can read other's authorized entities 2"() {
         expect:
             server().perform(
-                    get( targetURL + "/user-uid-3/authorized_entities" ).with( adminToken )
+                    get( targetURL + "/user-uid-3/entities?authorized=true" ).with( adminToken )
             ).andExpect(
                     status().isOk()
             )
@@ -204,7 +204,52 @@ class UserControllerTest extends IntegrationSpecification {
     def "common user cannot read other's authorized entities 2"() {
         expect:
             server().perform(
-                    get( targetURL + "/user-uid-3/authorized_entities" ).with( commonToken )
+                    get( targetURL + "/user-uid-3/entities?authorized=true" ).with( commonToken )
+            ).andExpect(
+                    status().isForbidden()
+            )
+    }
+
+    def "user can read his/her unauthorized entities 1"() {
+        when:
+        def response = JSON(
+                server().perform(
+                        get( targetURL + "/user-uid-1/entities?authorized=false" ).with( adminToken )
+                ).andExpect(
+                        status().isOk()
+                ).andReturn()
+        )
+        then:
+        response.pageMetadata.totalElements == 4
+    }
+
+
+    def "user can read all entities with is authorized"() {
+        when:
+            def response = JSON(
+                    server().perform(
+                            get( targetURL + "/user-uid-1/entities" ).with( adminToken )
+                    ).andExpect(
+                            status().isOk()
+                    ).andReturn()
+            )
+        then:
+            response.pageMetadata.totalElements == 5
+    }
+
+    def "admin user can read other's all entities with is authorized 2"() {
+        expect:
+            server().perform(
+                    get( targetURL + "/user-uid-3/entities" ).with( adminToken )
+            ).andExpect(
+                    status().isOk()
+            )
+    }
+
+    def "common user cannot read other's all entities with is authorized 2"() {
+        expect:
+            server().perform(
+                    get( targetURL + "/user-uid-3/entities" ).with( commonToken )
             ).andExpect(
                     status().isForbidden()
             )

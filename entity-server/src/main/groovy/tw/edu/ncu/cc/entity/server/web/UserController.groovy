@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.WebDataBinder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.HttpServerErrorException
+import tw.edu.ncu.cc.entity.data.v1.EntityAuthorizedObject
 import tw.edu.ncu.cc.entity.data.v1.EntityObject
 import tw.edu.ncu.cc.entity.data.v1.UserObject
 import tw.edu.ncu.cc.entity.server.model.InternetEntity
@@ -113,21 +114,22 @@ public class UserController extends BaseController {
     }
 
     @PreAuthorize( value = "hasRole('admin') or ( hasRole('common') and #uid == authentication.name )" )
-    @RequestMapping( value = "{uid}/authorized_entities", method = RequestMethod.GET )
-    def showEntities( @PathVariable( "uid" ) final String uid, Pageable pageable, Authentication authentication ) {
+    @RequestMapping( value = "{uid}/entities", method = RequestMethod.GET )
+    def showAllEntities( @PathVariable( "uid" ) final String uid,
+                         @RequestParam( value = "authorized", required = false ) final Boolean authorized,
+                         Pageable pageable, Authentication authentication ) {
 
-        logger.info( "user authorized entities show, size:{}, number:{}, offset:{}, operator:{}",
-                pageable.pageSize, pageable.pageNumber, pageable.offset, authentication.name)
+        logger.info( "user entities show, authorized:{}, size:{}, number:{}, offset:{}, operator:{}",
+                authorized, pageable.pageSize, pageable.pageNumber, pageable.offset, authentication.name)
 
-        def entityPages = userOperation.showAuthorizedEntities( uid, pageable )
-
+        def objectPages = userOperation.showEntities( uid, authorized, pageable )
         def entityObjects = conversionService.convert(
-                entityPages.content,
-                TypeDescriptor.collection( List.class, TypeDescriptor.valueOf( InternetEntity.class ) ),
-                TypeDescriptor.array( TypeDescriptor.valueOf( EntityObject.class ) )
+                objectPages.content,
+                TypeDescriptor.collection( List.class, TypeDescriptor.valueOf( [].class ) ),
+                TypeDescriptor.array( TypeDescriptor.valueOf( EntityAuthorizedObject.class ) )
         )
 
-        return toPageObjects( entityObjects, entityPages )
+        return toPageObjects( entityObjects, objectPages )
     }
 
 }

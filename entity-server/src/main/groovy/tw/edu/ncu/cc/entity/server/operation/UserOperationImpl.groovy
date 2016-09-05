@@ -29,9 +29,15 @@ class UserOperationImpl implements UserOperation {
     }
 
     @Override
-    Page<InternetEntity> showAuthorizedEntities(String uid, Pageable pageable) {
+    Page<Object[]> showEntities(String uid, Boolean isAuthorized, Pageable pageable) {
         def user = show( uid )
-        return entityService.findAuthorizedByUser( user, pageable )
+        if( isAuthorized == null ) {
+            return entityService.findIsAuthorizedByUser( user, pageable )
+        } else if( isAuthorized ) {
+            return entityService.findAuthorizedByUser( user, pageable )
+        } else {
+            return entityService.findUnauthorizedByUser( user, pageable )
+        }
     }
 
     @Override

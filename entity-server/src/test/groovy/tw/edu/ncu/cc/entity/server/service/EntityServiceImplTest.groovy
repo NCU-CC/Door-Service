@@ -83,4 +83,14 @@ class EntityServiceImplTest extends SpringSpecification {
             entityService.findAuthorizedByUser( user, new PageRequest( 0, 10 ) ).totalElements == 1
     }
 
+    def "it can find entities and if authorized with specified user"() {
+        given:
+            def user = userService.findByUID( "user-uid-1" )
+            def objects = entityService.findIsAuthorizedByUser( user, new PageRequest( 0, 10 ) )
+        expect:
+            objects.totalElements == 5
+            objects.content[0][1] == true
+            objects.content[1][1] == false
+    }
+
 }

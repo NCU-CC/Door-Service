@@ -15,7 +15,16 @@ public interface InternetEntityRepository extends JpaRepository< InternetEntity,
 
     Page<InternetEntity> findByCreator( User user, Pageable pageable )
 
-    @Query("SELECT e FROM InternetEntity e JOIN e.authorizees ea WHERE ea = (:user)")
-    Page<InternetEntity> findAuthorizedByUser( @Param("user") User user, Pageable pageable )
+    @Query( value = "SELECT e, CASE WHEN (ea = :user) THEN TRUE ELSE FALSE END as authorized FROM InternetEntity e JOIN e.authorizees ea WHERE ea = (:user)",
+            countQuery = "SELECT COUNT(e) FROM InternetEntity e JOIN e.authorizees ea WHERE ea = (:user)" )
+    Page<Object[]> findAuthorizedByUser( @Param("user") User user, Pageable pageable )
+
+    @Query( value = "SELECT e, CASE WHEN (ea = :user) THEN TRUE ELSE FALSE END as authorized FROM InternetEntity e JOIN e.authorizees ea WHERE ea != (:user)",
+            countQuery = "SELECT COUNT(e) FROM InternetEntity e JOIN e.authorizees ea WHERE ea != (:user)" )
+    Page<Object[]> findUnauthorizedByUser( @Param("user") User user, Pageable pageable )
+
+    @Query( value = "SELECT e, CASE WHEN (ea = :user) THEN TRUE ELSE FALSE END as authorized FROM InternetEntity e JOIN e.authorizees ea",
+            countQuery = "SELECT COUNT(e) FROM InternetEntity e WHERE :user != NULL")
+    Page<Object[]> findIsAuthorizedByUser( @Param("user") User user, Pageable pageable )
 
 }

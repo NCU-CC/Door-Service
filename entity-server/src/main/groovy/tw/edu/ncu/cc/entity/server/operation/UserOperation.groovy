@@ -10,7 +10,7 @@ import tw.edu.ncu.cc.entity.server.model.User
 interface UserOperation {
 
     Page<User> index( Pageable pageable )
-    Page<InternetEntity> showAuthorizedEntities( String uid, Pageable pageable )
+    Page<Object[]> showEntities( String uid, Boolean isAuthorized, Pageable pageable )
     User show( String uid )
     User create( UserObject userObject )
     User update( String uid, UserObject userObject )
