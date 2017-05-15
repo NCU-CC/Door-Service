@@ -29,10 +29,10 @@ public class SecurityConfig {
         @Override
         protected void configure( HttpSecurity http ) throws Exception {
             http.requestMatchers()
-                    .antMatchers( "/v*/entities/**" )
-                    .antMatchers( "/v*/authorizations/**" )
-                    .antMatchers( "/v*/users/**" )
-                    .antMatchers( "/v*/whoami/**" )
+                    .antMatchers( HttpMethod.GET, "/v*/entities/**", "/v*/users/**", "/v*/authorizations/**", "/v*/whoami/**" )
+                    .antMatchers( HttpMethod.POST, "/v*/entities/**", "/v*/users/**", "/v*/authorizations/**" )
+                    .antMatchers( HttpMethod.PUT, "/v*/entities/**", "/v*/users/**" )
+                    .antMatchers( HttpMethod.DELETE, "/v*/entities/**", "/v*/users/**", "/v*/authorizations/**" )
                     .and()
                     .addFilterBefore( accessTokenDecisionFilter, UsernamePasswordAuthenticationFilter )
                     .addFilterAfter( userTypeFilter,  UsernamePasswordAuthenticationFilter)
