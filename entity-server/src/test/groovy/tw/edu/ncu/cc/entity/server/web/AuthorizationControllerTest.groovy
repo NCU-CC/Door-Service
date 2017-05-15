@@ -69,7 +69,7 @@ class AuthorizationControllerTest extends IntegrationSpecification {
         and:
             def response = JSON(
                     server().perform(
-                            get( "/v1/users/user-uid-1/authorized_entities" ).with( adminToken )
+                            get( "/v1/users/user-uid-1/entities?authorized=true" ).with( adminToken )
                     ).andExpect(
                             status().isOk()
                     ).andReturn()
@@ -101,7 +101,7 @@ class AuthorizationControllerTest extends IntegrationSpecification {
         and:
             def response = JSON(
                     server().perform(
-                            get( "/v1/users/user-uid-1/authorized_entities" ).with( adminToken )
+                            get( "/v1/users/user-uid-1/entities?authorized=true" ).with( adminToken )
                     ).andExpect(
                             status().isOk()
                     ).andReturn()

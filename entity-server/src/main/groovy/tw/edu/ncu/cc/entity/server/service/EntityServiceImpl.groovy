@@ -46,8 +46,18 @@ class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    Page<InternetEntity> findAuthorizedByUser( User user, Pageable pageable ) {
+    Page<Object[]> findAuthorizedByUser( User user, Pageable pageable ) {
         entityRepository.findAuthorizedByUser( user, pageable )
+    }
+
+    @Override
+    Page<Object[]> findUnauthorizedByUser(User user, Pageable pageable) {
+        entityRepository.findUnauthorizedByUser( user, pageable )
+    }
+
+    @Override
+    Page<Object[]> findIsAuthorizedByUser( User user, Pageable pageable ) {
+        entityRepository.findIsAuthorizedByUser( user, pageable )
     }
 
     @Override

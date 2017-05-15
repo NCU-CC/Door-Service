@@ -12,7 +12,9 @@ interface EntityService {
     InternetEntity findByUUID( String uuid )
     InternetEntity findByIp( String ip )
     Page< InternetEntity > findAll( Pageable pageable )
-    Page< InternetEntity > findAuthorizedByUser( User user, Pageable pageable )
+    Page< Object[] > findUnauthorizedByUser( User user, Pageable pageable )
+    Page< Object[] > findAuthorizedByUser( User user, Pageable pageable )
+    Page< Object[] > findIsAuthorizedByUser( User user, Pageable pageable )
     Page< InternetEntity > findByCreator( User user, Pageable pageable )
     void delete( InternetEntity entity )
 }
