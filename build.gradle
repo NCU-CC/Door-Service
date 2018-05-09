@@ -8,6 +8,10 @@ subprojects{
 
     apply plugin: 'groovy'
 
+    test {
+        testLogging.showStandardStreams = true
+    }
+
     sourceCompatibility = 1.8
 
     tasks.withType( JavaCompile ) {
